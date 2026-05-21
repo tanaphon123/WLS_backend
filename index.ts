@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+// Manage import file
 import { authenticateToken } from "./src/middleware/auth.ts"; 
-
 import { AuthController } from "./src/controllers/AuthController.ts";
 import { WeightController } from "./src/controllers/WeightController.ts";
 
@@ -24,6 +24,7 @@ app.use(cors({
   credentials: true // จำเป็นมากถ้าเราจะใช้ Cookie/Header
 }));
 
+// Test API
 app.get('/', (req, res) => {
   res.send('Weight Loss System Test API')
 })
@@ -34,8 +35,10 @@ app.post('/api/auth/login', AuthController.login);
 
 // ----- Weight API -----
 app.get('/api/weight-history', authenticateToken as any, WeightController.getWeightHistory);
+app.post('/api/create-weight-log', authenticateToken as any, WeightController.createWeightLog);
+app.put('/api/update-weight-log/:weight_id', authenticateToken as any, WeightController.updateWeightLog);
+app.delete('/api/delete-weight-log/:weight_id', authenticateToken as any, WeightController.deleteWeightLog);
 
-app.get("/", (req, res) => res.send("Personal Management API is ready!"));
 app.listen(port, () => {
   console.log(`🚀 SQL Server ready at http://localhost:${port}`);
   console.log(`🔗 Database connected to: ${databaseUrl.split('@')[1]}`); // โชว์แค่ host ปลายทางเพื่อความปลอดภัย

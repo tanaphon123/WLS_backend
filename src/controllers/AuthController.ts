@@ -3,10 +3,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import sql from '../config/db';
 
+
+// [TODO] /api/auth/register
 const register = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
-  // 1. Validation เบื้องต้น
+  // 1. Validation
   if (!username || !email || !password) {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' });
   }
@@ -23,11 +25,11 @@ const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Username หรือ Email นี้ถูกใช้งานแล้ว' });
     }
 
-    // 3. แฮชรหัสผ่านก่อนลง Database (เพื่อความปลอดภัยระดับโลก)
+    // 3. แฮชรหัสผ่านก่อนลง Database
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // 4. ยิง SQL ดิบ Insert ข้อมูลเข้าไปเลย
+    // 4. ยิง SQL ดิบ Insert ข้อมูลเข้าไปใน db
     const newUser = await sql`
       INSERT INTO users (username, email, password, created_by)
       VALUES (${username}, ${email}, ${hashedPassword}, 'register_form')
@@ -44,6 +46,7 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
+// [TODO] /api/auth/login
 const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
@@ -70,7 +73,7 @@ const login = async (req: Request, res: Response) => {
     }
 
     // 3. สร้าง JWT Token โดยแอบยัด user_id และ username เข้าไปด้วย
-    const jwtSecret = process.env.JWT_SECRET || 'super_secret_fallback_key';
+    const jwtSecret = process.env.JWT_SECRET || 'super_secret_fallback_key_21052026_1824';
     const token = jwt.sign(
       { id: user[0].user_id, username: user[0].username },
       jwtSecret,
@@ -79,7 +82,7 @@ const login = async (req: Request, res: Response) => {
 
     // 4. ส่ง Token กลับไปให้หน้าบ้านเอาไปใช้ต่อ
     return res.json({
-      message: 'เข้าสู่ระบบสำเร็จ พร้อมไปลดความอ้วนกันต่อ! 🦾',
+      message: 'เข้าสู่ระบบสำเร็จ!',
       token,
       user: {
         id: user[0].user_id,
@@ -92,7 +95,7 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-// มัดรวมตัวแม่ส่งออก สไตล์โปรเจกต์เรา
+// ส่งออกฟังก์ชัน api ไป index
 export const AuthController = {
   register,
   login
