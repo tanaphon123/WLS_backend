@@ -19,7 +19,7 @@ app.use(express.json());
 
 // เปิดการใช้งาน cors ให้เข้าถึงจาก domain frontend ได้
 app.use(cors({
-  origin: "http://localhost:3000", // URL ของ Next.js
+  origin: "http://localhost:3001", // URL ของ Next.js
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true // จำเป็นมากถ้าเราจะใช้ Cookie/Header
 }));
